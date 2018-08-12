@@ -1,6 +1,6 @@
 """
-Simple script used to train the RetinaNet on the coco dataset
-Evaluations are not conducted here
+Simple script used to train the RetinaNet on the coco dataset on a single GPU
+Evaluations are not conducted in this script, you should run eval using a separate thread to not slow down training
 """
 import os
 import logging
@@ -94,8 +94,8 @@ def main():
     while not done:
         for batch in dataset_loader:
             # Copy batch to GPU
-            image = batch['image'].cuda()
-            annotations = [ann.cuda() for ann in batch['annotations']]
+            image = batch['image'].cuda(DEVICE_IDX)
+            annotations = [ann.cuda(DEVICE_IDX) for ann in batch['annotations']]
 
             # zero optimizer
             optimizer.zero_grad()
