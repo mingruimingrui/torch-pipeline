@@ -7,11 +7,12 @@ This repository contains optimized training scripts for training models from tor
 
 Scripts in this repository assumes that these packages are installed,
 
-* torch >= 0.4.0
-* torchvision >= 0.2.1
+* torch >= (latest stable)
+* torchvision >= (latest stable)
 * cv2 >= 3.0.0
 * pillow >= 3.0.0
 
+It is important to follow the latest stable of [`pytorch`](https://pytorch.org/) as it is still in prerelease and every patch adds important bug fixes.
 Earlier versions can work, however have not been tested before.
 
 Additionally the `torch-collections` and `torch-datasets` has to be installed. The installation instructions to install the latest-stable versions of these 2 package can be found in `install_requirements.sh`. Simply run `./install_requirements.sh`.

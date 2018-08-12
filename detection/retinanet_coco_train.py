@@ -1,5 +1,6 @@
 """
-
+Simple script used to train the RetinaNet on the coco dataset
+Evaluations are not conducted here
 """
 import os
 import logging
