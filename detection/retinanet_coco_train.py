@@ -89,7 +89,7 @@ def main():
     count_steps = 0
     cum_loss = 0
     best_loss = 1e5
-    logging.info('Add requirements loaded, starting training')
+    logging.info('Dataset and model loaded, starting training')
 
     while not done:
         for batch in dataset_loader:
@@ -136,7 +136,7 @@ def main():
                 break
 
     torch.save(retinanet, 'snapshot/epoch_final.pth')
-    print('Finished Training')
+    logging.info('Finished Training')
 
 
 if __name__ == '__main__':
