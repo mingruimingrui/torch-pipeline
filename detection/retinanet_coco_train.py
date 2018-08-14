@@ -8,13 +8,14 @@ import logging
 import torch
 
 from torch_datasets.datasets.convert import convert_coco_to_detection_dataset
-from torch_datasets import DetectionCollateContainer
+from torch_datasets import DetectionDataset, DetectionCollateContainer
 from torch_collections import RetinaNet
 
 
 # User defined locations
 COCO_ANN_FILE = None
 ROOT_IMAGE_DIR = None
+DATASET_CACHE = None
 DEVICE_IDX = 0
 TOTAL_STEPS = 500000
 STEPS_PER_EPOCH = 5000
@@ -61,14 +62,29 @@ def main():
     make_folders()
     set_default_logging('logs/train.log')
 
-    # Create data loader
-    dataset = convert_coco_to_detection_dataset(
-        COCO_ANN_FILE,
-        ROOT_IMAGE_DIR,
-        no_crowd=True
-    )
-    collate_container = DetectionCollateContainer(allow_transform=True)
+    # Load dataset
+    if DATASET_CACHE is not None:
+        if os.path.isfile(DATASET_CACHE):
+            dataset = DetectionDataset(DATASET_CACHE)
+            logging.info('Dataset loaded from cache')
+        else:
+            dataset = convert_coco_to_detection_dataset(
+                COCO_ANN_FILE,
+                ROOT_IMAGE_DIR,
+                no_crowd=True
+            )
+            dataset.save_dataset(DATASET_CACHE)
+            logging.info('Dataset loaded and cached')
+    else:
+        dataset = convert_coco_to_detection_dataset(
+            COCO_ANN_FILE,
+            ROOT_IMAGE_DIR,
+            no_crowd=True
+        )
+        logging.info('Dataset loaded')
 
+    # Create data loader
+    collate_container = DetectionCollateContainer(allow_transform=True)
     dataset_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=1,
@@ -77,7 +93,6 @@ def main():
         num_workers=4,
         pin_memory=True
     )
-    logging.info('Dataset loaded')
 
     # Create model
     retinanet = RetinaNet(num_classes=dataset.get_num_classes()).train().cuda(DEVICE_IDX)
