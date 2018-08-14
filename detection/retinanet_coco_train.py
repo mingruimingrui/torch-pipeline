@@ -77,19 +77,20 @@ def main():
         num_workers=4,
         pin_memory=True
     )
+    logging.info('Dataset loaded')
 
     # Create model
     retinanet = RetinaNet(num_classes=dataset.get_num_classes()).train().cuda(DEVICE_IDX)
+    logging.info('Model loaded')
 
-    # Initialize optimizer
+    # Initialize optimizer and training variables
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, retinanet.parameters()), lr=0.00001)
 
-    # Initialize training variables
     done = False  # done acts as a loop breaker
     count_steps = 0
     cum_loss = 0
     best_loss = 1e5
-    logging.info('Dataset and model loaded, starting training')
+    logging.info('Starting training')
 
     while not done:
         for batch in dataset_loader:
