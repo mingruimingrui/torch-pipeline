@@ -57,12 +57,8 @@ def set_default_logging(log_path=None):
     logging.info('logging will be automatically saved to {}'.format(log_path))
 
 
-def main():
-    # Initialize logging and folders
-    make_folders()
-    set_default_logging('logs/train.log')
-
-    # Load dataset
+def load_dataset():
+    """ Dynamically loads dataset from cache or makes dataset from source """
     if DATASET_CACHE is not None:
         if os.path.isfile(DATASET_CACHE):
             dataset = DetectionDataset(DATASET_CACHE)
@@ -83,7 +79,10 @@ def main():
         )
         logging.info('Dataset loaded')
 
-    # Create data loader
+    return dataset
+
+
+def make_dataset_loader(dataset):
     collate_container = DetectionCollateContainer(allow_transform=True)
     dataset_loader = torch.utils.data.DataLoader(
         dataset,
@@ -93,14 +92,30 @@ def main():
         num_workers=4,
         pin_memory=True
     )
+    return dataset_loader
 
-    # Create model
+
+def load_model(dataset):
+    """ Builds/load a model appropriate for the dataset """
     retinanet = RetinaNet(num_classes=dataset.get_num_classes()).train().cuda(DEVICE_IDX)
     logging.info('Model loaded')
+    return retinanet
+
+
+def main():
+    # Initialize logging and folders
+    make_folders()
+    set_default_logging('logs/train.log')
+
+    # Load dataset
+    dataset = load_dataset()
+    dataset_loader = make_dataset_loader()
+
+    # Create model
+    retinanet = load_model(dataset)
 
     # Initialize optimizer and training variables
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, retinanet.parameters()), lr=0.00001)
-
     done = False  # done acts as a loop breaker
     count_steps = 0
     cum_loss = 0
