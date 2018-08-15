@@ -146,7 +146,7 @@ def main():
 
             # Update training statistics
             count_steps += 1
-            cum_loss = 0.8 * cum_loss + loss.detach()
+            cum_loss = 0.99 * cum_loss + loss.detach()
 
             if count_steps % STEPS_PER_EPOCH == 0:
                 # Record weights as latest
@@ -159,7 +159,7 @@ def main():
 
                 # print current epoch information
                 cur_epoch = int(count_steps / STEPS_PER_EPOCH)
-                logging.info('Epoch: {} - loss: {}'.format(cur_epoch, cum_loss / 5))
+                logging.info('Epoch: {} - loss: {}'.format(cur_epoch, cum_loss / 100))
 
             if count_steps >= TOTAL_STEPS:
                 # Stop loop when required number of steps are passed
