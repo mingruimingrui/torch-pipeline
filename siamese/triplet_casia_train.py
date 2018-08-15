@@ -26,7 +26,7 @@ from torch_datasets.datasets.convert import convert_webface_to_siamese_dataset
 from torch_datasets.utils.misc import cuda_batch
 
 from torch_datasets import SiameseDataset, ImageCollateContainer, BalancedBatchSampler
-from torch_collections import Siamese, negative_mining
+from torch_collections import Siamese
 
 
 # User defined locations
@@ -156,7 +156,6 @@ def main():
         n_classes=NUM_PERSON_PER_GROUP,
         n_samples=NUM_IMG_PER_PERSON
     )
-    triplet_selector = negative_mining.HardestNegativeTripletSelector(encoder.configs['margin'], cpu=True)
 
     # Initialize optimizer and training variables
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, encoder.parameters()), lr=0.001)
@@ -172,7 +171,7 @@ def main():
             group_embeddings, group_labels = encode_batch(group_ids, encoder, dataset, collate_container, batch_size=BATCH_SIZE)
 
             # Get triplets based on negative mining strategy
-            triplet_ids = triplet_selector.get_triplets(group_embeddings, group_labels)
+            triplet_ids = encoder.select_triplets(group_embeddings, group_labels)
             triplet_ids.apply_(lambda ii: group_ids[ii])
 
             # Train model on triplets
