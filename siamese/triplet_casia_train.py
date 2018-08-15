@@ -159,7 +159,7 @@ def main():
     triplet_selector = negative_mining.HardestNegativeTripletSelector(encoder.configs['margin'], cpu=True)
 
     # Initialize optimizer and training variables
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, encoder.parameters()), lr=0.00001)
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, encoder.parameters()), lr=0.001)
     done = False  # done acts as a loop breaker
     count_steps = 0
     cum_loss = 0
