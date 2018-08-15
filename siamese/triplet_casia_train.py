@@ -30,8 +30,8 @@ from torch_collections import Siamese, negative_mining
 
 
 # User defined locations
-CASIA_ROOT_DIR = 'C://Users/mingr/Datasets/webface/CASIA-WebFace'
-DATASET_CACHE = 'C://Users/mingr/Datasets/webface/webface_full.json'
+CASIA_ROOT_DIR = None
+DATASET_CACHE = None
 DEVICE_IDX = None
 TOTAL_STEPS = 500000
 STEPS_PER_EPOCH = 2500
