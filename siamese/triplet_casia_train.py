@@ -118,7 +118,7 @@ def encode_batch(image_ids, encoder, dataset, collate_container, batch_size=60):
             image_batch = image_batch.cuda(DEVICE_IDX)
 
         # Compute embeddings
-        embeddings_batch = encoder(image_batch).cpu()
+        embeddings_batch = encoder(image_batch).detach().cpu()
 
         # Store embeddings and labels
         embeddings = embeddings + [e for e in embeddings_batch]
